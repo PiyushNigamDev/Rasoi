@@ -16,7 +16,30 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
-import { API_BASE_URL } from "../services/api";
+import { API_BASE_URL, getImageUrl as getApiImageUrl } from "../services/api";
+
+const RAZORPAY_CHECKOUT_URL = "https://checkout.razorpay.com/v1/checkout.js";
+
+const loadRazorpayCheckout = () => {
+  if (window.Razorpay) return Promise.resolve();
+
+  const existingScript = document.querySelector(`script[src="${RAZORPAY_CHECKOUT_URL}"]`);
+  if (existingScript) {
+    return new Promise((resolve, reject) => {
+      existingScript.addEventListener("load", resolve, { once: true });
+      existingScript.addEventListener("error", () => reject(new Error("Unable to load Razorpay checkout")), { once: true });
+    });
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = RAZORPAY_CHECKOUT_URL;
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error("Unable to load Razorpay checkout"));
+    document.body.appendChild(script);
+  });
+};
 
 const ProceedToPay = () => {
   const navigate = useNavigate();
@@ -24,7 +47,8 @@ const ProceedToPay = () => {
   const { user, token, isLoggedIn } = useAuth();
 
   const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  // Online payment is the default, so clicking Place Order opens Razorpay.
+  const [paymentMethod, setPaymentMethod] = useState("upi");
   const [orderConfirmed, setOrderConfirmed] = useState(null);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
 
@@ -122,15 +146,8 @@ const ProceedToPay = () => {
       let preparationMinutes = response.data.order?.preparationMinutes || response.data.orderData?.preparationMinutes || 30;
 
       if (paymentMethod !== "cod") {
-        const script = document.createElement("script");
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
-        script.async = true;
-        document.body.appendChild(script);
-
-        await new Promise((resolve, reject) => {
-          script.onload = resolve;
-          script.onerror = () => reject(new Error("Unable to load Razorpay checkout"));
-        });
+        await loadRazorpayCheckout();
+        if (!window.Razorpay) throw new Error("Razorpay checkout is unavailable");
 
         await new Promise((resolve, reject) => {
           const checkout = new window.Razorpay({
@@ -176,11 +193,20 @@ const ProceedToPay = () => {
         readyAt: Date.now() + preparationMinutes * 60 * 1000,
       });
     } catch (err) {
-      console.log(err);
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.error?.description ||
+        err.message ||
+        "Something went wrong";
+      console.error("Order payment failed:", {
+        status: err.response?.status,
+        data: err.response?.data,
+        error: err,
+      });
       Swal.fire({
         icon: "error",
         title: "Order Failed",
-        text: err.response?.data?.message || "Something went wrong",
+        text: errorMessage,
       });
     } finally {
       setLoading(false);
@@ -194,9 +220,7 @@ const ProceedToPay = () => {
   };
 
   const getImageUrl = (img) => {
-    if (!img) return "https://via.placeholder.com/80?text=Food";
-    if (img.startsWith("http")) return img;
-    return `http://localhost:5000/uploads/${img}`;
+    return getApiImageUrl(img) || "https://via.placeholder.com/80?text=Food";
   };
 
   if (orderConfirmed) {
@@ -405,8 +429,8 @@ const ProceedToPay = () => {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   {[
                     { id: "cod", label: "Cash on Delivery", icon: Banknote },
-                    { id: "upi", label: "UPI", icon: Wallet },
-                    { id: "card", label: "Card", icon: CreditCard },
+                    { id: "upi", label: "Razorpay (UPI/Card)", icon: Wallet },
+                    { id: "card", label: "Razorpay Card", icon: CreditCard },
                   ].map((method) => {
                     const Icon = method.icon;
                     const active = paymentMethod === method.id;

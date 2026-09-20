@@ -36,7 +36,7 @@ const Breakfast = () => {
   // ===================== GET ALL RECIPES =====================
   const getsData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/getall/", {
+      const res = await axios.get("https://rasoi-backend1.onrender.com/api/getall/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setRecipes((res.data.data || []).filter((recipe) => recipe.category === "breakfast"));
@@ -73,7 +73,7 @@ const Breakfast = () => {
       form.append("isAvailable", isAvailable);
       form.append("category", category);
 
-      const res = await axios.post("http://localhost:5000/api/create", form, {
+      const res = await axios.post("https://rasoi-backend1.onrender.com/api/create", form, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -129,7 +129,7 @@ const Breakfast = () => {
       }
 
       const res = await axios.put(
-        `http://localhost:5000/api/update/${selectId}`,
+        `https://rasoi-backend1.onrender.com/api/update/${selectId}`,
         updateForm,
         {
           headers: {
@@ -182,7 +182,7 @@ const Breakfast = () => {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:5000/api/delete/${id}`, {
+        await axios.delete(`https://rasoi-backend1.onrender.com/api/delete/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -211,7 +211,7 @@ const Breakfast = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/update/${id}`,
+        `https://rasoi-backend1.onrender.com/api/update/${id}`,
         { isAvailable: !currentStatus },
         {
           headers: {
@@ -250,7 +250,7 @@ const Breakfast = () => {
     if (!img) return "https://via.placeholder.com/100?text=No+Image";
     if (img.startsWith("http")) return img;
     const imagePath = img.replace(/^\/+/, "");
-    return `http://localhost:5000/${
+    return `https://rasoi-backend1.onrender.com/${
       imagePath.startsWith("uploads/") ? imagePath : `uploads/${imagePath}`
     }`;
   };

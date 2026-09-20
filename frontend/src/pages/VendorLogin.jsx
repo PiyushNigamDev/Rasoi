@@ -15,7 +15,7 @@ const VendorLogin = () => {
     event.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:5000/api/vendor/login", { email, password });
+      const response = await axios.post("https://rasoi-backend1.onrender.com/api/vendor/login", { email, password });
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("admin", JSON.stringify(response.data.vendor));
       localStorage.setItem("role", "vendor");

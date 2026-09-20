@@ -11,7 +11,7 @@ const Lunch = () => {
   const getLunch = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/getall/");
+      const res = await axios.get("https://rasoi-backend1.onrender.com/api/getall/");
 
       // Filter only lunch category
       const lunchItems = (res.data.data || []).filter(
@@ -34,7 +34,7 @@ const Lunch = () => {
   const getImageUrl = (img) => {
     if (!img) return "https://via.placeholder.com/400x300?text=No+Image";
     if (img.startsWith("http")) return img;
-    return `http://localhost:5000/uploads/${img}`;
+    return `https://rasoi-backend1.onrender.com/uploads/${img}`;
   };
 
   // Search filter

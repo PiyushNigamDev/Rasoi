@@ -13,7 +13,7 @@ const VendorRegister = () => {
     event.preventDefault();
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/vendor/register", form);
+      await axios.post("https://rasoi-backend1.onrender.com/api/vendor/register", form);
       await Swal.fire({ icon: "success", title: "Vendor account created", text: "You can now sign in to manage your recipes", confirmButtonColor: "#f97316" });
       navigate("/vendor/login");
     } catch (error) {

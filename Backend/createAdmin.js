@@ -22,7 +22,7 @@ const createAdmin = async () => {
         role: "admin",
       },
       { returnDocument: "after", upsert: true, runValidators: true }
-    );
+    );                       
 
     console.log("Admin account is ready");
     console.log("Email:", admin.email);

@@ -5,15 +5,21 @@ import Order from "../models/Order.js";
 import Recipe from "../models/Recipe.js";
 
 const getRazorpay = () => {
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+  const keyId = process.env.RAZORPAY_KEY_ID?.trim();
+  const keySecret = process.env.RAZORPAY_KEY_SECRET?.trim();
+
+  if (!keyId || !keySecret) {
     throw new Error("Razorpay test keys are not configured");
   }
 
   return new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
+    key_id: keyId,
+    key_secret: keySecret,
   });
 };
+
+const getErrorMessage = (error, fallback) =>
+  error?.error?.description || error?.error?.reason || error?.description || error?.message || fallback;
 
 const getOrderData = async (body, userId) => {
   const { items, deliveryAddress, notes, paymentMethod } = body;
@@ -92,7 +98,9 @@ export const createPaymentOrder = async (req, res) => {
       orderData,
     });
   } catch (err) {
-    return res.status(400).json({ success: false, message: err.message });
+    const message = getErrorMessage(err, "Unable to create the payment order");
+    console.error("Unable to create payment order:", message);
+    return res.status(400).json({ success: false, message });
   }
 };
 
@@ -123,7 +131,9 @@ export const verifyPayment = async (req, res) => {
 
     return res.status(201).json({ success: true, order });
   } catch (err) {
-    return res.status(400).json({ success: false, message: err.message });
+    const message = getErrorMessage(err, "Unable to verify the payment");
+    console.error("Unable to verify payment:", message);
+    return res.status(400).json({ success: false, message });
   }
 };
 

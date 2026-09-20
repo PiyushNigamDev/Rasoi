@@ -25,5 +25,5 @@ try {
   console.error("Error:", error.message);
   process.exitCode = 1;
 } finally {
-  await mongoose.disconnect();
+  await mongoose.disconnect();    
 }

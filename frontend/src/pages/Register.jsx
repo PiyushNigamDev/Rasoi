@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { API_BASE_URL } from "../services/api";
 
 function Register() {
   const navigate = useNavigate();
@@ -90,7 +91,7 @@ function Register() {
       };
 
       const response = await axios.post(
-        "http://localhost:5000/api/register",
+        `${API_BASE_URL}/api/register`,
         data,
         {
           headers: {
@@ -127,9 +128,9 @@ function Register() {
           err.response.data?.error ||
           `Error: ${err.response.status}`;
       } else if (err.request) {
-        // No response (backend down / CORS / network)
-        message =
-          "Cannot connect to server. Make sure backend is running on port 5000.";
+        // No response (backend down, CORS, or network error). Port 5000 only
+        // applies locally; production uses the URL configured in Vercel.
+        message = `Cannot reach the API at ${API_BASE_URL}. Please try again shortly.`;
       } else {
         message = err.message || "Something went wrong";
       }

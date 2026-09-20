@@ -28,7 +28,7 @@ const BreakFast = () => {
   const getBreakfast = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/getall/");
+      const res = await axios.get("https://rasoi-backend1.onrender.com/api/getall/");
       
       // Filter only breakfast category
       const breakfastItems = (res.data.data || []).filter(
