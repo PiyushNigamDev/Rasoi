@@ -1,62 +1,67 @@
 import Recipe from "../models/Recipe.js";
 
-export const createRecipe=async(req,res)=>{
-    try{
-const {name,description,price,image,category,preparationTime,isAvailable}=req.body;
-if(!name||!description||!price||!category||!preparationTime||isAvailable === undefined){
-    return res.status(400).json({
-        success:false,
-        message:"all fields are required"
-    })
-}
-if(req.file){
-    req.body.image=`uploads/${req.file.filename}`;
-}
-req.body.createdBy = req.userExist.id;
-const newRecipe= await Recipe.create(req.body);
-return res.status(201).json({
-    success:true,
-    message:"recipe created successfully",
-    data:newRecipe
-})
+export const createRecipe = async (req, res) => {
+    try {
+        const { name, description, price, category, preparationTime, isAvailable } = req.body;
 
-    }catch(err){
-        return res.status(500).json({
-            success:false,
-            message:err.message
-        })
-    }
-}
-
-export const updateRecipe=async(req,res)=>{
-    try{
-        if(req.file){
-            req.body.image=`uploads/${req.file.filename}`;
+        if (!name || !description || !price || !category || !preparationTime || isAvailable === undefined) {
+            return res.status(400).json({
+                success: false,
+                message: "all fields are required",
+            });
         }
-        const updates=await Recipe.findOneAndUpdate(
+
+        if (req.file?.cloudinaryUrl) {
+            req.body.image = req.file.cloudinaryUrl;
+        }
+
+        req.body.createdBy = req.userExist.id;
+        const newRecipe = await Recipe.create(req.body);
+
+        return res.status(201).json({
+            success: true,
+            message: "recipe created successfully",
+            data: newRecipe,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+};
+
+export const updateRecipe = async (req, res) => {
+    try {
+        if (req.file?.cloudinaryUrl) {
+            req.body.image = req.file.cloudinaryUrl;
+        }
+
+        const updates = await Recipe.findOneAndUpdate(
             { _id: req.params.id, createdBy: req.userExist.id },
             req.body,
             { new: true }
         );
-        if(!updates){
-            return res.status(404).json({
-                success:false,
-                message:"recipe not found"
-            })
-        }
-        return res.status(200).json({
-            success:true,
-            message:"recipe updated successfully",
-            data: updates
-        })
 
-    }catch(err){
+        if (!updates) {
+            return res.status(404).json({
+                success: false,
+                message: "recipe not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "recipe updated successfully",
+            data: updates,
+        });
+    } catch (err) {
         return res.status(500).json({
-            success:false,
-            message:err.message
-        })
+            success: false,
+            message: err.message,
+        });
     }
-}
+};
 
 
 export const getAll= async(req,res)=>{

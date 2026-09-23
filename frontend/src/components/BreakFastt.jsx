@@ -32,9 +32,9 @@ const Lunch = () => {
 
   // Image URL helper
   const getImageUrl = (img) => {
-    if (!img) return "https://via.placeholder.com/400x300?text=No+Image";
+    if (!img) return "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80";
     if (img.startsWith("http")) return img;
-    return `https://rasoi-backend1.onrender.com/uploads/${img}`;
+    return `http://localhost:5000/uploads/${img.replace(/^\/+/, "")}`;
   };
 
   // Search filter
@@ -107,7 +107,7 @@ const Lunch = () => {
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                     onError={(e) => {
                       e.target.src =
-                        "https://via.placeholder.com/400x300?text=No+Image";
+                        "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80";
                     }}
                   />
 

@@ -245,12 +245,10 @@ const FastFood = () => {
 
   // Image URL helper
   const getImageUrl = (img) => {
-    if (!img) return "https://via.placeholder.com/100?text=No+Image";
+    if (!img) return "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80";
     if (img.startsWith("http")) return img;
-    const imagePath = img.replace(/^\/+/, "");
-    return `https://rasoi-backend1.onrender.com/${
-      imagePath.startsWith("uploads/") ? imagePath : `uploads/${imagePath}`
-    }`;
+    const imagePath = img.replace(/^\/+/, "").replace(/\s+/g, "%20");
+    return `http://localhost:5000/${imagePath.startsWith("uploads/") ? imagePath : `uploads/${imagePath}`}`;
   };
 
   return (
@@ -346,7 +344,7 @@ const FastFood = () => {
                         alt={recipe.name}
                         className="h-14 w-14 rounded-xl object-cover"
                         onError={(e) => {
-                          e.target.src = "https://via.placeholder.com/100?text=No+Image";
+                          e.target.src = "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80";
                         }}
                       />
                     </td>

@@ -1,7 +1,7 @@
 import express from "express";
- import auth, { optionalAuth, vendorOnly } from "../middleware/authMiddleware.js";
-import uploads from "../middleware/imageMiddleware.js";
-import { createRecipe,updateRecipe,getAll,getById,deleteRecipe } from "../controllers/recipeController.js";
+import auth, { optionalAuth, vendorOnly } from "../middleware/authMiddleware.js";
+import uploads, { uploadSingleImage } from "../middleware/imageMiddleware.js";
+import { createRecipe, updateRecipe, getAll, getById, deleteRecipe } from "../controllers/recipeController.js";
 import {
     registerUser,
     loginUser
@@ -25,8 +25,8 @@ router.post("/orders/create", auth, createPaymentOrder);
 router.post("/orders/verify-payment", auth, verifyPayment);
 router.get("/orders/my", auth, getMyOrders);
 
-router.post("/create", auth, vendorOnly, uploads.single("image"), createRecipe);
-router.put("/update/:id", auth, vendorOnly, uploads.single("image"), updateRecipe);
+router.post("/create", auth, vendorOnly, uploads.single("image"), uploadSingleImage, createRecipe);
+router.put("/update/:id", auth, vendorOnly, uploads.single("image"), uploadSingleImage, updateRecipe);
 router.get("/getall", optionalAuth, getAll);
 router.get("/getall/:id",getById);
 router.delete("/delete/:id", auth, vendorOnly, deleteRecipe);
