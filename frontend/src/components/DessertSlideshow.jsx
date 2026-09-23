@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, CakeSlice, Clock, IndianRupee } from "lucide-react";
-import axios from "axios";
-import { API_BASE_URL, getImageUrl } from "../services/api";
+import { getImageUrl, getRecipes } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 const fallbackDesserts = [
@@ -16,8 +15,8 @@ const DessertSlideshow = () => {
 
   useEffect(() => {
     let active = true;
-    axios.get(`${API_BASE_URL}/api/getall`).then((response) => {
-      const items = (response.data.data || []).filter((recipe) => recipe.category === "dessert" && recipe.isAvailable !== false);
+    getRecipes().then((recipes) => {
+      const items = recipes.filter((recipe) => recipe.category === "dessert" && recipe.isAvailable !== false);
       if (active && items.length) setDesserts(items);
     }).catch(() => {});
     return () => { active = false; };

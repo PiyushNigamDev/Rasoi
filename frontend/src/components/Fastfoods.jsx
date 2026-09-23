@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Clock, IndianRupee, Search, Pizza } from "lucide-react";
-import { API_BASE_URL, getImageUrl } from "../services/api";
+import { getImageUrl, getRecipes } from "../services/api";
 import { useCart } from "../context/CartContext";
 
 const FastFoods = () => {
@@ -28,10 +27,10 @@ const FastFoods = () => {
   const getFastFood = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/api/getall`);
+      const recipes = await getRecipes();
 
       // Filter only fastfood category
-      const fastFoodItems = (res.data.data || []).filter(
+      const fastFoodItems = recipes.filter(
         (item) => item.category?.toLowerCase() === "fastfood"
       );
 

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import axios from "axios";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
-import { API_BASE_URL, getImageUrl } from "../services/api";
+import { getImageUrl, getRecipes } from "../services/api";
 
 const categoryLabel = (category) =>
   ({ fastfood: "Fast Food", breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", dessert: "Dessert", dietfood: "Diet Food", drink: "Drinks" }[category] || category);
@@ -19,8 +18,8 @@ function BackendMenu() {
   useEffect(() => setSearch(searchParams.get("search") || ""), [searchParams]);
   useEffect(() => {
     let mounted = true;
-    axios.get(`${API_BASE_URL}/api/getall`).then(({ data }) => {
-      if (mounted) setRecipes((data.data || []).filter((recipe) => recipe.isAvailable !== false));
+    getRecipes().then((items) => {
+      if (mounted) setRecipes(items.filter((recipe) => recipe.isAvailable !== false));
     }).catch(() => mounted && setRecipes([])).finally(() => mounted && setLoading(false));
     return () => { mounted = false; };
   }, []);
