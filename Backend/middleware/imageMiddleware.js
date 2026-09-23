@@ -20,7 +20,11 @@ export const uploadSingleImage = async (req, res, next) => {
     req.file.filename = result.public_id;
     next();
   } catch (error) {
-    next(error);
+    console.error("Recipe image upload failed:", error.message);
+    return res.status(502).json({
+      success: false,
+      message: "The recipe image could not be uploaded. Please try again.",
+    });
   }
 };
 

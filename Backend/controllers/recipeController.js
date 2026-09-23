@@ -37,10 +37,18 @@ export const updateRecipe = async (req, res) => {
             req.body.image = req.file.cloudinaryUrl;
         }
 
+        // Do not allow a malformed multipart request to overwrite fields with
+        // undefined values. The existing image is retained unless a new upload
+        // completed successfully above.
+        const allowedFields = ["name", "description", "price", "category", "preparationTime", "isAvailable", "image"];
+        const changes = Object.fromEntries(
+            Object.entries(req.body).filter(([key, value]) => allowedFields.includes(key) && value !== undefined)
+        );
+
         const updates = await Recipe.findOneAndUpdate(
             { _id: req.params.id, createdBy: req.userExist.id },
-            req.body,
-            { new: true }
+            { $set: changes },
+            { new: true, runValidators: true }
         );
 
         if (!updates) {

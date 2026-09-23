@@ -1,4 +1,10 @@
 import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
+
+// This module is imported while Express routes are being loaded, before the
+// application entry point executes dotenv.config(). Load it here as well so
+// Cloudinary always receives its credentials for recipe image updates.
+dotenv.config();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
