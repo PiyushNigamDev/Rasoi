@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Clock, IndianRupee, Search, Sun } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import { API_BASE_URL, getImageUrl } from "../services/api";
+import { getImageUrl } from "../services/api";
 
 const Lunch = () => {
   const [recipes, setRecipes] = useState([]);
@@ -28,7 +28,7 @@ const Lunch = () => {
   const getLunch = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/api/getall`);
+      const res = await axios.get("https://rasoi-backend1.onrender.com/api/getall/");
 
       // Filter only lunch category
       const lunchItems = (res.data.data || []).filter(
@@ -116,7 +116,8 @@ const Lunch = () => {
                     alt={recipe.name}
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                     onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                      e.currentTarget.src = getImageUrl();
+                      e.currentTarget.onerror = null;
                     }}
                   />
 
