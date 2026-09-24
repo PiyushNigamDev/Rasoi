@@ -11,6 +11,7 @@ import {
     createPaymentOrder,
     verifyPayment,
     getMyOrders,
+    cancelOrder,
 } from "../controllers/orderController.js";
 
 const router = express.Router();
@@ -23,6 +24,7 @@ router.post("/vendor/login", loginVendor);
 router.post("/vendor/register", registerVendor);
 router.post("/orders/create", auth, createPaymentOrder);
 router.post("/orders/verify-payment", auth, verifyPayment);
+router.patch("/orders/:id/cancel", auth, cancelOrder);
 router.get("/orders/my", auth, getMyOrders);
 
 router.post("/create", auth, vendorOnly, uploads.single("image"), uploadSingleImage, createRecipe);

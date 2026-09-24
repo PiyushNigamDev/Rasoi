@@ -47,6 +47,7 @@ const ProceedToPay = () => {
   const { user, token, isLoggedIn } = useAuth();
 
   const [loading, setLoading] = useState(false);
+  const [cancelingOrder, setCancelingOrder] = useState(false);
   // Online payment is the default, so clicking Place Order opens Razorpay.
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [orderConfirmed, setOrderConfirmed] = useState(null);
@@ -214,6 +215,35 @@ const ProceedToPay = () => {
     }
   };
 
+  const handleCancelOrder = async () => {
+    if (!orderConfirmed?.id) return;
+
+    try {
+      setCancelingOrder(true);
+      await axios.patch(
+        `${API_BASE_URL}/api/orders/${orderConfirmed.id}/cancel`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setOrderConfirmed((prev) => ({ ...prev, cancelled: true }));
+      Swal.fire({
+        icon: "success",
+        title: "Order cancelled",
+        text: "Your order has been successfully cancelled.",
+        confirmButtonColor: "#f97316",
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Cancellation failed",
+        text: error.response?.data?.message || "Unable to cancel this order right now.",
+      });
+    } finally {
+      setCancelingOrder(false);
+    }
+  };
+
   const formatRemainingTime = () => {
     const minutes = Math.floor(remainingSeconds / 60);
     const seconds = remainingSeconds % 60;
@@ -225,6 +255,28 @@ const ProceedToPay = () => {
   };
 
   if (orderConfirmed) {
+    if (orderConfirmed.cancelled) {
+      return (
+        <>
+          <Navbar />
+          <div className="flex min-h-[70vh] items-center justify-center bg-slate-50 px-4 py-12">
+            <div className="w-full max-w-lg rounded-3xl border border-rose-100 bg-white p-8 text-center shadow-xl sm:p-12">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                <CheckCircle2 size={42} />
+              </div>
+              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-rose-600">Order cancelled</p>
+              <h1 className="mt-2 text-3xl font-bold text-slate-900">Your order was cancelled</h1>
+              <p className="mt-3 text-slate-500">You can keep browsing the menu or return home.</p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <button onClick={() => navigate("/menu")} className="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600">Continue shopping</button>
+                <button onClick={() => navigate("/auth")} className="rounded-xl border border-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-50">Go home</button>
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
     return (
       <>
         <Navbar />
@@ -250,6 +302,9 @@ const ProceedToPay = () => {
             )}
             {orderConfirmed.id && <p className="mt-5 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-600">Reference: <span className="font-semibold text-slate-900">{orderConfirmed.id}</span></p>}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button disabled={cancelingOrder} onClick={handleCancelOrder} className="rounded-xl border border-rose-200 bg-rose-50 px-6 py-3 font-semibold text-rose-600 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60">
+                {cancelingOrder ? "Cancelling..." : "Cancel Order"}
+              </button>
               <button onClick={() => navigate("/menu")} className="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600">Continue shopping</button>
               <button onClick={() => navigate("/auth")} className="rounded-xl border border-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-50">Go home</button>
             </div>
