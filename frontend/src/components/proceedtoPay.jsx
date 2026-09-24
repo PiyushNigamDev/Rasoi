@@ -74,7 +74,8 @@ const ProceedToPay = () => {
     notes: "",
   });
 
-  const deliveryFee = totalPrice > 0 ? 40 : 0;
+  const FREE_SHIPPING_THRESHOLD = 50;
+  const deliveryFee = totalPrice > 0 ? (totalPrice >= FREE_SHIPPING_THRESHOLD ? 0 : 40) : 0;
   const grandTotal = totalPrice + deliveryFee;
 
   const handleChange = (e) => {
@@ -492,8 +493,21 @@ const ProceedToPay = () => {
                   </div>
                   <div className="flex justify-between text-slate-600">
                     <span>Delivery Fee</span>
-                    <span>₹{deliveryFee}</span>
+                    <span>{deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`}</span>
                   </div>
+
+                  {totalPrice >= FREE_SHIPPING_THRESHOLD && totalPrice > 0 && (
+                    <p className="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+                      🎉 Congratulations! Free shipping unlocked.
+                    </p>
+                  )}
+
+                  {totalPrice < FREE_SHIPPING_THRESHOLD && totalPrice > 0 && (
+                    <p className="text-xs text-orange-500 bg-orange-50 rounded-lg px-3 py-2">
+                      Add ₹{FREE_SHIPPING_THRESHOLD - totalPrice} more for free delivery
+                    </p>
+                  )}
+
                   <div className="flex justify-between border-t border-slate-100 pt-2 text-base font-bold text-slate-900">
                     <span>Total</span>
                     <span className="text-orange-600">₹{grandTotal}</span>

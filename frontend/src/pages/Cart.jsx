@@ -20,7 +20,8 @@ function Cart() {
     totalPrice,
   } = useCart();
 
-  const deliveryFee = totalPrice > 0 ? (totalPrice >= 499 ? 0 : 40) : 0;
+  const FREE_SHIPPING_THRESHOLD = 50;
+  const deliveryFee = totalPrice > 0 ? (totalPrice >= FREE_SHIPPING_THRESHOLD ? 0 : 40) : 0;
   const grandTotal = totalPrice + deliveryFee;
 
   // Checkout handler
@@ -198,9 +199,15 @@ function Cart() {
                     </span>
                   </div>
 
-                  {totalPrice < 499 && totalPrice > 0 && (
+                  {totalPrice >= FREE_SHIPPING_THRESHOLD && totalPrice > 0 && (
+                    <p className="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+                      🎉 Congratulations! Free shipping unlocked.
+                    </p>
+                  )}
+
+                  {totalPrice < FREE_SHIPPING_THRESHOLD && totalPrice > 0 && (
                     <p className="text-xs text-orange-500 bg-orange-50 rounded-lg px-3 py-2">
-                      Add ₹{499 - totalPrice} more for free delivery
+                      Add ₹{FREE_SHIPPING_THRESHOLD - totalPrice} more for free delivery
                     </p>
                   )}
 

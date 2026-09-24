@@ -51,7 +51,8 @@ const getOrderData = async (body, userId) => {
   });
 
   const subtotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFee = subtotal > 0 ? 40 : 0;
+  const FREE_SHIPPING_THRESHOLD = 50;
+  const deliveryFee = subtotal > 0 ? (subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 40) : 0;
   const preparationMinutes = items.reduce((maxMinutes, item) => {
     const recipe = mongoose.Types.ObjectId.isValid(item.recipeId)
       ? recipeMap.get(String(item.recipeId))
