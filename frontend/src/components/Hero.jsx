@@ -76,7 +76,7 @@ function Hero() {
               Explore the menu
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link to="/menu/dessert" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-3.5 text-xs font-bold text-white backdrop-blur-md transition hover:bg-white/20 sm:w-auto sm:px-7 sm:py-4 sm:text-sm">
+            <Link to="/menu/dessert" className="inline-flex w-full max-w-[260px] items-center justify-center gap-2 rounded-full border border-white/40 bg-white/12 px-4 py-3.5 text-xs font-bold text-white/95 shadow-[0_10px_25px_rgba(15,23,42,0.25)] backdrop-blur-md transition hover:bg-white/20 active:scale-[0.98] sm:max-w-none sm:w-auto sm:px-7 sm:py-4 sm:text-sm">
               Browse desserts
             </Link>
           </div>
