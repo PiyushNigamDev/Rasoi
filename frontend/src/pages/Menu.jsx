@@ -25,9 +25,7 @@ function Menu() {
       try {
         setLoading(true);
         const response = await axios.get(`${API_BASE_URL}/api/getall`);
-        const recipes = (response.data?.data || []).filter(
-          (item) => item.isAvailable !== false
-        );
+        const recipes = response.data?.data || [];
 
         const normalizedItems = recipes.map((recipe) => ({
           id: recipe._id,
@@ -38,6 +36,7 @@ function Menu() {
           image: getImageUrl(recipe.image),
           desc: recipe.description || recipe.desc || "",
           isVeg: recipe.category !== "fastfood" && recipe.category !== "dinner",
+          isAvailable: recipe.isAvailable,
           emoji: "🍽️",
         }));
 

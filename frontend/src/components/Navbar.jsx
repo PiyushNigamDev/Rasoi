@@ -54,6 +54,8 @@ function Navbar() {
 
   const { totalItems } = useCart();
   const { user, isLoggedIn, logout } = useAuth();
+  const displayName = user?.name?.trim() || "User";
+  const firstName = displayName.split(" ")[0];
 
   // =====================================
   // SCROLL EFFECT
@@ -900,7 +902,7 @@ function Navbar() {
                     <div className="hidden xl:block text-left">
                       <p
                         className={`
-                          max-w-[85px]
+                          max-w-[120px]
                           truncate
                           text-xs
                           font-bold
@@ -912,7 +914,7 @@ function Navbar() {
                           }
                         `}
                       >
-                        {user?.name || "User"}
+                        Hi, {firstName}
                       </p>
 
                       <p
@@ -1003,11 +1005,11 @@ function Navbar() {
 
                           <div className="min-w-0">
                             <p className="truncate text-sm font-bold text-slate-900">
-                              {user?.name || "User"}
+                              Hi, {displayName}
                             </p>
 
                             <p className="truncate text-xs text-slate-500">
-                              {user?.email || ""}
+                              Your account
                             </p>
                           </div>
                         </div>
@@ -1530,11 +1532,11 @@ function Navbar() {
 
                       <div className="min-w-0">
                         <p className="truncate text-sm font-bold text-slate-800">
-                          {user?.name || "User"}
+                          Hi, {displayName}
                         </p>
 
                         <p className="truncate text-xs text-slate-400">
-                          {user?.email || ""}
+                          Your account
                         </p>
                       </div>
                     </div>
