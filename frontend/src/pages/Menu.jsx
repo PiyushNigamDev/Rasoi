@@ -328,13 +328,22 @@ function Menu() {
             </div>
 
             <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide">
-              {["Breakfast", "Lunch", "Fast Food", "Dinner", "Dessert", "Diet Food", "Drinks"].map((meal) => (
+              {[
+                { label: "All", to: "/menu" },
+                { label: "Breakfast", to: "/menu/breakfast" },
+                { label: "Lunch", to: "/menu/lunch" },
+                { label: "Fast Food", to: "/menu/fastfood" },
+                { label: "Dinner", to: "/menu/dinner" },
+                { label: "Dessert", to: "/menu/dessert" },
+                { label: "Diet Food", to: "/menu/dietfood" },
+                { label: "Drinks", to: "/menu/drinks" },
+              ].map((meal) => (
                 <Link
-                  key={meal}
-                  to={`/menu/${meal === "Fast Food" ? "fastfood" : meal === "Diet Food" ? "dietfood" : meal.toLowerCase()}`}
+                  key={meal.label}
+                  to={meal.to}
                   className="whitespace-nowrap rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 transition hover:bg-orange-500 hover:text-white"
                 >
-                  {meal}
+                  {meal.label}
                 </Link>
               ))}
             </div>
