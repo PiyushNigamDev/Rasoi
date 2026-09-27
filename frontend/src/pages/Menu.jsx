@@ -18,6 +18,8 @@ function Menu() {
     setSearch(q);
   }, [searchParams]);
 
+  const { cartItems, addToCart, removeFromCart } = useCart();
+
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
