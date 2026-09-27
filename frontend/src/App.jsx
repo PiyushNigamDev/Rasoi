@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Menu from "./pages/Menu";
 import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
+import Profile from "./pages/Profile";
 import FloatingCart from "./components/FloatingCart";
 import Navbar from "./components/Navbar";
 import ProceedToPay from "./components/proceedtoPay";
@@ -66,6 +67,7 @@ function App() {
         <Route path="/menu" element={<Menu />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/checkout" element={<ProceedToPay />} />
