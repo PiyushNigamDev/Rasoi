@@ -71,12 +71,12 @@ function Hero() {
             Restaurant-quality meals prepared fresh by local kitchen partners and delivered warm to your door.
           </p>
 
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link to="/menu" className="group inline-flex items-center justify-center gap-3 rounded-full bg-orange-500 px-7 py-4 text-sm font-bold text-white shadow-2xl shadow-orange-950/40 transition hover:bg-orange-400 hover:shadow-orange-500/30">
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Link to="/menu" className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-orange-500 px-5 py-4 text-sm font-bold text-white shadow-2xl shadow-orange-950/40 transition hover:bg-orange-400 hover:shadow-orange-500/30 sm:w-auto sm:px-7">
               Explore the menu
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link to="/menu/dessert" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-4 text-sm font-bold text-white backdrop-blur-md transition hover:bg-white/20">
+            <Link to="/menu/dessert" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 py-4 text-sm font-bold text-white backdrop-blur-md transition hover:bg-white/20 sm:w-auto sm:px-7">
               Browse desserts
             </Link>
           </div>
