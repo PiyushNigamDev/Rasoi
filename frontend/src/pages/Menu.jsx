@@ -1,286 +1,87 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Link, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
-import { useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
+import { API_BASE_URL, getImageUrl } from "../services/api";
+
 function Menu() {
+  const [menuItems, setMenuItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
 
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
-  // keep search in sync when coming from navbar
   useEffect(() => {
     const q = searchParams.get("search") || "";
     setSearch(q);
   }, [searchParams]);
-  const { cartItems, addToCart, removeFromCart } = useCart();
+
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE_URL}/api/getall`);
+        const recipes = (response.data?.data || []).filter(
+          (item) => item.isAvailable !== false
+        );
+
+        const normalizedItems = recipes.map((recipe) => ({
+          id: recipe._id,
+          name: recipe.name,
+          category: recipe.category,
+          price: recipe.price,
+          rating: recipe.rating || 4.7,
+          image: getImageUrl(recipe.image),
+          desc: recipe.description || recipe.desc || "",
+          isVeg: recipe.category !== "fastfood" && recipe.category !== "dinner",
+          emoji: "🍽️",
+        }));
+
+        setMenuItems(normalizedItems);
+      } catch (error) {
+        console.error("Failed to fetch menu items:", error);
+        setMenuItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenuItems();
+  }, []);
 
   const categories = [
     "All",
-    "Veg",
-    "Non-Veg",
     "Breakfast",
-    "Salad",
-    "Sweets",
+    "Lunch",
+    "Fast Food",
+    "Dinner",
     "Dessert",
     "Diet Food",
     "Drinks",
   ];
 
-  const menuItems = [
-    {
-      id: 101,
-      name: "Paneer Butter Masala",
-      category: "Veg",
-      price: 249,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&q=80",
-      desc: "Creamy tomato gravy with soft paneer cubes",
-      isVeg: true,
-      emoji: "🍛",
-    },
-    {
-      id: 102,
-      name: "Veg Biryani",
-      category: "Veg",
-      price: 199,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1589302168069-af2f3d4e9b73?w=600&q=80",
-      desc: "Fragrant basmati rice with mixed vegetables",
-      isVeg: true,
-      emoji: "🍚",
-    },
-    {
-      id: 103,
-      name: "Dal Makhani",
-      category: "Veg",
-      price: 179,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600&q=80",
-      desc: "Slow-cooked black lentils in buttery gravy",
-      isVeg: true,
-      emoji: "🍲",
-    },
-    {
-      id: 104,
-      name: "Butter Chicken",
-      category: "Non-Veg",
-      price: 299,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1603894584372-a21ea7102f15?w=600&q=80",
-      desc: "Tender chicken in rich tomato-butter sauce",
-      isVeg: false,
-      emoji: "🍗",
-    },
-    {
-      id: 105,
-      name: "Chicken Biryani",
-      category: "Non-Veg",
-      price: 279,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=80",
-      desc: "Aromatic rice layered with spicy chicken",
-      isVeg: false,
-      emoji: "🍗",
-    },
-    {
-      id: 106,
-      name: "Tandoori Chicken",
-      category: "Non-Veg",
-      price: 329,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&q=80",
-      desc: "Smoky, juicy chicken cooked in tandoor",
-      isVeg: false,
-      emoji: "🍖",
-    },
-    {
-      id: 107,
-      name: "Masala Dosa",
-      category: "Breakfast",
-      price: 129,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1668236543090-827244bcfea0?w=600&q=80",
-      desc: "Crispy dosa filled with spiced potato",
-      isVeg: true,
-      emoji: "🥞",
-    },
-    {
-      id: 108,
-      name: "Poha",
-      category: "Breakfast",
-      price: 89,
-      rating: 4.5,
-      image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&q=80",
-      desc: "Light & flavorful flattened rice breakfast",
-      isVeg: true,
-      emoji: "🥣",
-    },
-    {
-      id: 109,
-      name: "Egg Benedict",
-      category: "Breakfast",
-      price: 199,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80",
-      desc: "Poached eggs on muffin with hollandaise",
-      isVeg: false,
-      emoji: "🍳",
-    },
-    {
-      id: 110,
-      name: "Greek Salad",
-      category: "Salad",
-      price: 159,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80",
-      desc: "Fresh veggies, feta, olives & olive oil",
-      isVeg: true,
-      emoji: "🥗",
-    },
-    {
-      id: 111,
-      name: "Caesar Salad",
-      category: "Salad",
-      price: 179,
-      rating: 4.5,
-      image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&q=80",
-      desc: "Crisp romaine, croutons & creamy dressing",
-      isVeg: true,
-      emoji: "🥗",
-    },
-    {
-      id: 112,
-      name: "Chicken Salad",
-      category: "Salad",
-      price: 219,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
-      desc: "Grilled chicken with fresh garden greens",
-      isVeg: false,
-      emoji: "🥗",
-    },
-    {
-      id: 113,
-      name: "Gulab Jamun",
-      category: "Sweets",
-      price: 99,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1666195403996-0c17dde1d43c?w=600&q=80",
-      desc: "Soft milk-solid balls soaked in sugar syrup",
-      isVeg: true,
-      emoji: "🍮",
-    },
-    {
-      id: 114,
-      name: "Rasmalai",
-      category: "Sweets",
-      price: 129,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&q=80",
-      desc: "Spongy cottage cheese in sweetened milk",
-      isVeg: true,
-      emoji: "🥛",
-    },
-    {
-      id: 115,
-      name: "Jalebi",
-      category: "Sweets",
-      price: 89,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&q=80",
-      desc: "Crispy, juicy, deep-fried sweet spirals",
-      isVeg: true,
-      emoji: "🌀",
-    },
-    {
-      id: 116,
-      name: "Chocolate Brownie",
-      category: "Dessert",
-      price: 149,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&q=80",
-      desc: "Warm gooey brownie with chocolate chunks",
-      isVeg: true,
-      emoji: "🍫",
-    },
-    {
-      id: 117,
-      name: "Cheesecake",
-      category: "Dessert",
-      price: 199,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=600&q=80",
-      desc: "Creamy New York style cheesecake",
-      isVeg: true,
-      emoji: "🍰",
-    },
-    {
-      id: 118,
-      name: "Ice Cream Sundae",
-      category: "Dessert",
-      price: 129,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80",
-      desc: "Vanilla ice cream with chocolate & nuts",
-      isVeg: true,
-      emoji: "🍨",
-    },
-    {
-      id: 119,
-      name: "Berry Yogurt Parfait",
-      category: "Diet Food",
-      price: 189,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1488477181946-4cfa6c56fd38?w=600&q=80",
-      desc: "Greek yogurt, berries, oats and honey",
-      isVeg: true,
-      emoji: "🥣",
-    },
-    {
-      id: 120,
-      name: "Grilled Paneer Salad",
-      category: "Diet Food",
-      price: 229,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
-      desc: "Grilled paneer with greens and lemon dressing",
-      isVeg: true,
-      emoji: "🥗",
-    },
-    {
-      id: 121,
-      name: "Green Detox Cooler",
-      category: "Drinks",
-      price: 119,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=600&q=80",
-      desc: "Cucumber, mint, lime and refreshing herbs",
-      isVeg: true,
-      emoji: "🥒",
-    },
-    {
-      id: 122,
-      name: "Mango Iced Tea",
-      category: "Drinks",
-      price: 99,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80",
-      desc: "Chilled black tea with ripe mango and citrus",
-      isVeg: true,
-      emoji: "🥭",
-    },
-  ];
+  const normalizeCategory = (value = "") =>
+    String(value).trim().toLowerCase().replace(/\s+/g, "");
 
   const filteredItems = menuItems.filter((item) => {
+    const normalizedItemCategory = normalizeCategory(item.category);
+    const normalizedActiveCategory = normalizeCategory(activeCategory);
     const matchesCategory =
-      activeCategory === "All" || item.category === activeCategory;
+      !normalizedActiveCategory ||
+      normalizedActiveCategory === "all" ||
+      normalizedItemCategory === normalizedActiveCategory ||
+      (normalizedActiveCategory === "fastfood" && normalizedItemCategory === "fastfood") ||
+      (normalizedActiveCategory === "dietfood" && normalizedItemCategory === "dietfood") ||
+      (normalizedActiveCategory === "drinks" && normalizedItemCategory === "drink") ||
+      (normalizedActiveCategory === "drink" && normalizedItemCategory === "drink");
+
     const normalizedSearch = search.toLowerCase().trim();
     const matchesSearch = [item.name, item.desc].some((value) =>
       value.toLowerCase().includes(normalizedSearch)
     );
+
     return matchesCategory && matchesSearch;
   });
 
@@ -374,7 +175,9 @@ function Menu() {
           </p>
 
           {/* Food Grid */}
-          {filteredItems.length > 0 ? (
+          {loading ? (
+            <div className="py-20 text-center text-gray-500">Loading dishes...</div>
+          ) : filteredItems.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItems.map((item) => (
                 <div
