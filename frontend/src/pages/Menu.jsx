@@ -194,17 +194,14 @@ function Menu() {
                       alt={item.name}
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                     />
-                    <div className="absolute top-3 left-3">
+                    <div className="absolute top-3 right-3">
                       <span
                         className={`px-2.5 py-1 rounded-full text-xs font-bold text-white ${
-                          item.isVeg ? "bg-green-500" : "bg-red-500"
+                          item.isAvailable !== false ? "bg-green-500" : "bg-red-500"
                         }`}
                       >
-                        {item.isVeg ? "VEG" : "NON-VEG"}
+                        {item.isAvailable !== false ? "Available" : "Unavailable"}
                       </span>
-                    </div>
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                      ⭐ {item.rating}
                     </div>
                   </div>
 
