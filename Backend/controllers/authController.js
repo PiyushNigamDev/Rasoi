@@ -80,14 +80,20 @@ export const loginUser=async(req,res)=>{
             const token=jwtTokenGenerater({
                 id:userExists.id,
                 name:userExists.name,
-email:userExists.Email,
-role:userExists.role
+                email:userExists.email,
+                role:userExists.role
 
             })
             return res.status(200).json({
                 success:true,
                 message:"user logged in successfully",
-                token:token
+                token:token,
+                user:{
+                    id:userExists._id,
+                    name:userExists.name,
+                    email:userExists.email,
+                    role:userExists.role
+                }
             })
         }
 

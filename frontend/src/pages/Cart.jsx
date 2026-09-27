@@ -89,8 +89,8 @@ function Cart() {
               Add some delicious food from our menu
             </p>
             <Link
-              to="/auth"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-white
+              to="/menu"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-7 py-3.5 rounded-full font-semibold text-white
                 bg-gradient-to-r from-orange-500 to-rose-500
                 shadow-lg shadow-orange-500/30 hover:scale-105 transition-all"
             >
